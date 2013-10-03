@@ -10,7 +10,7 @@ defrecord DBI.Result, count: nil, columns: [], rows: [] do
   end
 
   def index(column, __MODULE__[columns: columns]) do
-    Enum.find_index(columns, &1 == column)
+    Enum.find_index(columns, &(&1 == column))
   end
 end
 
