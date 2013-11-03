@@ -25,7 +25,7 @@ defmodule DBI.Implementation do
       end
 
       def query_stream!(t, statement, bindings // []) do
-        stream(t, statement, bindings, &1, &2)
+        &stream(t, statement, bindings, &1, &2)
       end
 
       defp stream(t, statement, bindings, acc, fun) do
