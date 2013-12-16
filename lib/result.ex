@@ -31,11 +31,13 @@ defimpl Enumerable, for: DBI.Result do
 
   alias DBI.Result, as: T
 
-  def count(T[rows: rows]), do: length(rows)
-  def member?(T[rows: rows], row), do: Enum.member?(rows, row)
+  def count(T[rows: rows]), do: {:ok, length(rows)}
+  def member?(T[rows: rows], row), do: {:ok, Enum.member?(rows, row)}
 
-  def reduce(T[rows: [h|t]] = result, acc, fun) do
+  def reduce(T[rows: [h|t]] = result, {:cont, acc}, fun) do
     reduce(result.rows(t), fun.(h, acc), fun)
   end
-  def reduce(T[rows: []], acc, _fun), do: acc
+  def reduce(T[rows: []], {:cont, acc}, _fun), do: {:done, acc}
+  def reduce(T[], {:halt, acc}, _fun), do: {:halted, acc}
+  def reduce(T[] = t, {:suspend, acc}, fun), do: {:suspended, acc, &reduce(t, &1, fun)}
 end
