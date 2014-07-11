@@ -1,15 +1,15 @@
 defprotocol DBI do
-
-  @type t
+  @type t :: any
   @type statement :: String.t
 
   @type result :: DBI.Result.t
-  @type error
 
-  @type value
+  @type error :: any
+
+  @type value :: any
   @type bindings :: list({DBI.Statement.placeholder, value})
 
-  @type stream
+  @type stream :: any
 
   @spec query(t, statement) :: {:ok, result} | {:error, error}
   def query(t, statement)

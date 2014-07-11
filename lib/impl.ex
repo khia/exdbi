@@ -13,7 +13,7 @@ defmodule DBI.Implementation do
       def query!(t, statement, bindings) do
         case query(t, statement, bindings) do
            list when is_list(list) ->
-             lc item inlist list do
+             for item <- list do
                case item do
                  {:ok, result} -> result
                  {:error, error} -> raise error
@@ -24,7 +24,7 @@ defmodule DBI.Implementation do
         end
       end
 
-      def query_stream!(t, statement, bindings // []) do
+      def query_stream!(t, statement, bindings \\ []) do
         &stream(t, statement, bindings, &1, &2)
       end
 
@@ -33,15 +33,15 @@ defmodule DBI.Implementation do
         stream(acc, fun, result)
       end
 
-      defp stream(acc, _fun, DBI.Result[rows: []]) do
+      defp stream(acc, _fun, %DBI.Result{rows: []}) do
         acc
       end
 
-      defp stream(acc, fun, DBI.Result[rows: [h|t]] = result) do
-         fun.(h, acc) |> stream(fun, result.rows(t))
+      defp stream(acc, fun, %DBI.Result{rows: [h|t]} = result) do
+         fun.(h, acc) |> stream(fun, %DBI.Result{result | rows: t})
       end
 
-      Record.import DBI.Result, as: :result
+      alias DBI.Result
 
     end
   end
