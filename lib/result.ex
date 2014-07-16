@@ -37,7 +37,7 @@ defimpl Enumerable, for: DBI.Result do
   def member?(%T{rows: rows}, row), do: {:ok, Enum.member?(rows, row)}
 
   def reduce(%T{rows: [h|t]} = result, {:cont, acc}, fun) do
-    reduce(result.rows(t), fun.(h, acc), fun)
+    reduce(%{result | rows: t}, fun.(h, acc), fun)
   end
   def reduce(%T{rows: []}, {:cont, acc}, _fun), do: {:done, acc}
   def reduce(%T{}, {:halt, acc}, _fun), do: {:halted, acc}
