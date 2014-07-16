@@ -2,16 +2,16 @@ defmodule DBI.Result do
   defstruct count: nil, columns: [], rows: []
   @type t :: %{__struct__: __MODULE__}
 
-  def zip(row, %__MODULE__{columns: columns}) when is_tuple(row) and
-                                             tuple_size(row) == length(columns) do
+  def zip(%__MODULE__{columns: columns}, row) when is_tuple(row) and
+      tuple_size(row) == length(columns) do
     Enum.zip(columns, Tuple.to_list(row))
   end
-  def zip(column, %__MODULE__{columns: columns, rows: rows}) when is_binary(column) do
+  def zip(%__MODULE__{columns: columns, rows: rows}, column) when is_binary(column) do
     idx = Enum.find_index(columns, &(&1 == column))
     for row <- rows, do: elem(row, idx)
   end
 
-  def zip(requested_columns, %__MODULE__{columns: columns, rows: rows}) when is_list(requested_columns) do
+  def zip(%__MODULE__{columns: columns, rows: rows}, requested_columns) when is_list(requested_columns) do
     indexes = Enum.filter_map(Enum.with_index(columns),
       fn({column, _idx}) -> column in requested_columns end,
       fn(ci) -> ci end)
@@ -24,7 +24,7 @@ defmodule DBI.Result do
     for row <- rows, do: Enum.zip(columns, Tuple.to_list(row))
   end
 
-  def index(column, %__MODULE__{columns: columns}) do
+  def index(%__MODULE__{columns: columns}, column) do
     Enum.find_index(columns, &(&1 == column))
   end
 end
