@@ -16,12 +16,12 @@ defmodule DBI.Result do
       fn({column, _idx}) -> column in requested_columns end,
       fn(ci) -> ci end)
     for row <- rows do
-      for {column, idx} <- indexes, do: {column, elem(row, idx)}
+      for {column, idx} <- indexes, into: %{}, do: {column, elem(row, idx)}
     end
   end
 
   def zip(%__MODULE__{columns: columns, rows: rows}) do
-    for row <- rows, do: Enum.zip(columns, Tuple.to_list(row))
+    for row <- rows, do: Enum.into(Enum.zip(columns, Tuple.to_list(row)), %{})
   end
 
   def index(%__MODULE__{columns: columns}, column) do
