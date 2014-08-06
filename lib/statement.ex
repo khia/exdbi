@@ -10,7 +10,7 @@ defmodule DBI.Statement do
     {placeholder, rest} = parse_placeholder(rest, "")
     parse(rest, "", [placeholder, bacc|acc])
   end
-  defp parse(<< a :: [binary, 1], rest :: binary >>, bacc, acc) do
+  defp parse(<< a :: binary-1, rest :: binary >>, bacc, acc) do
     parse(rest, bacc <> a, acc)
   end
   defp parse(<<>>, "", acc) do
@@ -23,7 +23,7 @@ defmodule DBI.Statement do
   defp parse_placeholder("}" <> rest, acc) do
     {:"#{acc}", rest}
   end
-  defp parse_placeholder(<< a :: [binary, 1], rest :: binary >>, acc) do
+  defp parse_placeholder(<< a :: binary-1, rest :: binary >>, acc) do
     parse_placeholder(rest, acc <> a)
   end
   defp parse_placeholder(<<>>, acc) do
